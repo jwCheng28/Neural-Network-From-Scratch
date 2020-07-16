@@ -1,13 +1,25 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import pickle
+import gzip
 
-loc = "dataset/"
-train, test = loc + "mnist_train.pydb", loc + "mnist_test.pydb"
-train_data = pickle.load(open(train, "rb"))
-test_data =  pickle.load(open(test, "rb"))
+def load_data():
+    loc = "dataset/"
+    train, test = loc + "mnist_train.pydb.gz", loc + "mnist_test.pydb.gz"
 
-def display(n):
+    train_file = gzip.GzipFile(train, 'rb')
+    test_file = gzip.GzipFile(test, 'rb')
+
+    train_data = pickle.load(train_file)
+    test_data = pickle.load(test_file)
+
+    train_file.close()
+    test_file.close()
+
+    return train_data, test_data
+
+
+def display(n, train_data, test_data=None):
     fac = 0.99 / 255
     train_imgs = np.asfarray(train_data[:, 1:]) * fac + 0.01
     #test_imgs = np.asfarray(test_data[:, 1:]) * fac + 0.01
