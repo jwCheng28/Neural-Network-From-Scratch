@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 import gzip
 
-def load_data():
+def load_data(binary=True):
     loc = "dataset/"
     train, test = loc + "mnist_train.pydb.gz", loc + "mnist_test.pydb.gz"
 
@@ -16,13 +16,16 @@ def load_data():
     train_file.close()
     test_file.close()
 
+    if binary:
+        train_data = (train_data > 0).astype(int)
+        test_data = (test_data > 0).astype(int)
+
     return train_data, test_data
 
 
 def display(n, train_data, test_data=None):
-    #fac = 0.99 / 255
-    train_imgs = np.asfarray(train_data[:, 1:])# * fac + 0.01
-    #test_imgs = np.asfarray(test_data[:, 1:]) * fac + 0.01
+    train_imgs = np.asfarray(train_data[:, 1:])
+    #test_imgs = np.asfarray(test_data[:, 1:])
 
     train_labels = np.asfarray(train_data[:, :1])
     #test_labels = np.asfarray(test_data[:, :1])
@@ -32,3 +35,8 @@ def display(n, train_data, test_data=None):
         plt.imshow(img, cmap="Greys")
         plt.show()
         
+# Seperate data into X, y
+def seperate(data):
+    X = data[:, 1:]
+    y = data[:, 0]
+    return X, y
