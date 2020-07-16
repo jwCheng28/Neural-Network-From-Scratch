@@ -18,17 +18,25 @@ class Network():
         return (1 / (1 + np.exp(-z)))
 
     def forward_(self, a, l):
-        return self.sigmoid(np.dot(self.theta[l], a))
+        return self.sigmoid(np.dot(a, self.theta[l].T))
 
     def forwardFeed(self, X):
         a = X.copy()
         for i in range(self.n_layers - 1):
-            a = np.concatenate([np.ones(a.shape[0], 1), a], axis=1)
-            a = self.forward_(a.T, l)
+            a = np.concatenate([np.ones((a.shape[0], 1)), a], axis=1)
+            a = self.forward_(a, i)
         return a
 
-    def back_(self, l)
+    def costFunction(self, X, y):
+        m = y.size
+        y = y.copy()
+        y = np.eye(10)[y]
+        a = self.forwardFeed(X)
+        J = (-1 / m) * np.sum(y * np.log(a) + (1 - y) * np.log(1 - a))
+        return J 
 
-n = Network([2, 3, 1])
+    #def back_(self, l)
 
-print(n.theta)
+#n = Network([2, 3, 1])
+
+#print(n.theta)
