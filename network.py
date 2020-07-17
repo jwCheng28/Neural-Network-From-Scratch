@@ -37,9 +37,7 @@ class Network():
         return a
 
     def costFunction(self, X, y):
-        m = y.size
-        y = y.copy()
-        y = np.eye(10)[y]
+        m = y.shape[0]
         a = self.forwardFeed(X)
         J = (-1 / m) * np.sum(y * np.log(a) + (1 - y) * np.log(1 - a))
         return J 
@@ -62,8 +60,11 @@ class Network():
             Delta.append(np.dot(self.delta[i].T, self.a[i]))
         for i in range(len(self.theta)):
             thetaGrad.append((1 / m) * Delta[i]) 
-        return thetaGrad
+        return np.array(thetaGrad)
 
-#n = Network([2, 3, 1])
-
-#print(n.theta)
+    def gradientDescent(self, X, y, alpha, epoch, costH=False):
+        for i in range(epoch):
+            h = self.forwardFeed(X)
+            if costH: print(self.costFunction(X, y))
+            thetaGrad = self.backPropagation(y, h)
+            self.theta = self.theta - alpha * thetaGrad
