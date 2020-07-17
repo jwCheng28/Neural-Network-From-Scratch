@@ -17,8 +17,14 @@ def load_data(binary=True):
     test_file.close()
 
     if binary:
-        train_data = (train_data > 0).astype(int)
-        test_data = (test_data > 0).astype(int)
+        train_data = (np.concatenate([
+            train_data[:, :1], 
+            (train_data[:, 1:] > 0).astype(int)
+            ], axis=1)).astype(int)
+        test_data = (np.concatenate([
+            test_data[:, :1], 
+            (test_data[:, 1:] > 0).astype(int)
+            ], axis=1)).astype(int)
 
     return train_data, test_data
 
