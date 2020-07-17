@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Network():
     def __init__(self, structure):
@@ -62,9 +63,25 @@ class Network():
             thetaGrad.append((1 / m) * Delta[i]) 
         return np.array(thetaGrad)
 
-    def gradientDescent(self, X, y, alpha, epoch, costH=False):
+    def gradientDescent(self, X, y, alpha, epoch, costH=False, accurH=False):
         for i in range(epoch):
             h = self.forwardFeed(X)
             if costH: print(self.costFunction(X, y))
+            if accurH: print(self.accuracy(h, y))
             thetaGrad = self.backPropagation(y, h)
             self.theta = self.theta - alpha * thetaGrad
+        return h
+
+    def accuracy(self, h, y):
+        h = np.argmax(h, axis=1)
+        y = np.where(y==1)[1]
+        return np.mean(h==y)
+
+    def predict(self, X, h):
+        n = np.random.randint(0, len(X))
+        predict = np.argmax(h, axis=1)[n]
+        print("Prediction: " + str(predict))
+        img_set = np.asfarray(X)
+        img = img_set[n].reshape((28,28))
+        plt.imshow(img, cmap="Greys")
+        plt.show()
