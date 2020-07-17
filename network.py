@@ -66,10 +66,13 @@ class Network():
     def gradientDescent(self, X, y, alpha, epoch, costH=False, accurH=False):
         for i in range(epoch):
             h = self.forwardFeed(X)
-            if costH: print(self.costFunction(X, y))
-            if accurH: print(self.accuracy(h, y))
+            if costH: print("Epoch {} : {} ".format(i, self.costFunction(X, y)))
+            if accurH: print("Epoch {} : {} ".format(i, self.accuracy(h, y)))
             thetaGrad = self.backPropagation(y, h)
             self.theta = self.theta - alpha * thetaGrad
+            if not (costH or accurH): print("Epoch {} Completed".format(i))
+        h = self.forwardFeed(X)
+        print("Results - Cost : {}, Accuracy : {}".format(self.costFunction(X, y), self.accuracy(h, y)))        
         return h
 
     def accuracy(self, h, y):
