@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 class Network():
     def __init__(self, structure):
@@ -69,6 +70,20 @@ class Network():
             if costH: print("Epoch {} : {} ".format(i, self.costFunction(X, y)))
             if accurH: print("Epoch {} : {} ".format(i, self.accuracy(h, y)))
             thetaGrad = self.backPropagation(y, h)
+            self.theta = self.theta - alpha * thetaGrad
+            if not (costH or accurH): print("Epoch {} Completed".format(i))
+        h = self.forwardFeed(X)
+        print("Results - Cost : {}, Accuracy : {}".format(self.costFunction(X, y), self.accuracy(h, y)))        
+        return h
+
+    def stochasticGD(self, X, y, alpha, epoch, batch_size, costH=False, accurH=False):
+        for i in range(epoch):
+            ind = random.randint(0, len(X)-batch_size)
+            X_batches, y_batches = X[ind:ind+batch_size, :], y[ind:ind+batch_size, :]
+            h = self.forwardFeed(X_batches)
+            if costH: print("Epoch {} : {} ".format(i, self.costFunction(X_batches, y_batches)))
+            if accurH: print("Epoch {} : {} ".format(i, self.accuracy(h, y_batches)))
+            thetaGrad = self.backPropagation(y_batches, h)
             self.theta = self.theta - alpha * thetaGrad
             if not (costH or accurH): print("Epoch {} Completed".format(i))
         h = self.forwardFeed(X)
