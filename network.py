@@ -2,6 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
+'''
+TO DO LIST:
+ - Functions:
+    - Add Softmax
+    - Add ReLU
+ - Visualization:
+    - Cost Graph
+    - Learning Curves (Train vs CV)
+    - Predict Probability Graph
+'''
+
+
 class Network():
     def __init__(self, structure):
         '''
