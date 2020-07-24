@@ -13,6 +13,13 @@ TO DO LIST:
     - Predict Probability Graph
 '''
 
+'''
+Note To Self:
+ - Need to re-implement/change the class architecture
+    - don't use self.a
+    - Change Cost Function & Back_prop implementation for modularity
+'''
+
 class Network():
     def __init__(self, structure):
         '''
@@ -32,6 +39,10 @@ class Network():
     # Sigmoid Function
     def sigmoid(self, z):
         return (1 / (1 + np.exp(-z)))
+
+    # ReLU Function
+    def reLU(self, z):
+        return max(0, z)
 
     # Gradient of Sigmoid Function
     def sigmoidGrad(self, z):
