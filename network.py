@@ -65,11 +65,12 @@ class Network():
         return a
 
     # Cost/Loss Function using Cross Entropy
-    def costFunction(self, X, y, lambda_=0):
+    def costFunction(self, X, y, lambda_=0, getH=False):
         m = y.shape[0]
         a = self.forwardFeed(X)
         reg = (lambda_/m) * np.sum([np.sum(np.square(theta[:,1:])) for theta in self.theta])
         J = (-1 / m) * np.sum(y * np.log(a) + (1 - y) * np.log(1 - a)) + reg
+        if getH: return J, a
         return J 
 
     # Returns derivative of backing one layer
@@ -116,18 +117,35 @@ class Network():
         return h
 
     # Performs Stochastic Gradient Descent
-    def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, costH=False, accurH=False):
+    def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, costH=False, accurH=False, both=False):
         for i in range(epoch):
-            ind = random.randint(0, len(X)-batch_size)
-            X_batches, y_batches = X[ind:ind+batch_size, :], y[ind:ind+batch_size, :]
-            h = self.forwardFeed(X_batches)
-            if costH: print("Epoch {} : {} ".format(i, self.costFunction(X_batches, y_batches, lambda_)))
-            if accurH: print("Epoch {} : {} ".format(i, self.accuracy(h, y_batches)))
-            thetaGrad = self.backPropagation(y_batches, h, lambda_)
-            self.theta = self.theta - alpha * thetaGrad
-            if not (costH or accurH): print("Epoch {} Completed".format(i))
-        h = self.forwardFeed(X)
-        print("Results - Cost : {}, Accuracy : {}".format(self.costFunction(X, y, lambda_), self.accuracy(h, y)))        
+
+            # Randome Order
+            c = list(zip(X, y))
+            random.shuffle(c)
+            X_rand, y_rand = list(zip(*c))
+
+            # Train in batches
+            for j in range(0, len(X), batch_size):
+                X_batches = X[j:j+batch_size]
+                y_batches = y[j:j+batch_size]
+                h = self.forwardFeed(X_batches)            
+                thetaGrad = self.backPropagation(y_batches, h, lambda_)
+                self.theta = self.theta - alpha * thetaGrad
+
+            # Epoch Info Display Options    
+            if both:
+                costH = accurH = False
+                J, h = self.costFunction(X, y, lambda_, True)
+                print("Epoch {} : Trainig Cost = {}, Training Accuracy = {}".format(i + 1, J, self.accuracy(h, y)))
+        
+            if costH: print("Epoch {} Cost : {} ".format(i + 1, self.costFunction(X, y, lambda_)))
+        
+            if accurH: print("Epoch {} Training Accuracy : {} ".format(i + 1, self.accuracy(self.forwardFeed(X), y)))
+        
+            if not (costH or accurH or both): print("Epoch {} Completed".format(i + 1))
+        
+        #print("Results - Cost : {}, Accuracy : {}".format(self.costFunction(X, y, lambda_), self.accuracy(h, y)))        
         return h
 
     # Output test performance
