@@ -8,16 +8,8 @@ TO DO LIST:
     - Add Softmax
     - Add ReLU
  - Visualization:
-    - Cost Graph
     - Learning Curves (Train vs CV)
     - Predict Probability Graph
-'''
-
-'''
-Note To Self:
- - Need to re-implement/change the class architecture
-    - don't use self.a
-    - Change Cost Function & Back_prop implementation for modularity
 '''
 
 class Network():
@@ -117,7 +109,8 @@ class Network():
         return h
 
     # Performs Stochastic Gradient Descent
-    def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, costH=False, accurH=False, both=False):
+    def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, costH=False, accurH=False, both=False, history=False):
+        if history: J_hist = []
         for i in range(epoch):
 
             # Randome Order
@@ -137,6 +130,7 @@ class Network():
             if both:
                 costH = accurH = False
                 J, h = self.costFunction(X, y, lambda_, True)
+                if history: J_hist.append(J)
                 print("Epoch {} : Trainig Cost = {}, Training Accuracy = {}".format(i + 1, J, self.accuracy(h, y)))
         
             if costH: print("Epoch {} Cost : {} ".format(i + 1, self.costFunction(X, y, lambda_)))
@@ -145,7 +139,7 @@ class Network():
         
             if not (costH or accurH or both): print("Epoch {} Completed".format(i + 1))
         
-        #print("Results - Cost : {}, Accuracy : {}".format(self.costFunction(X, y, lambda_), self.accuracy(h, y)))        
+        if history: return h, J_hist
         return h
 
     # Output test performance
@@ -162,4 +156,14 @@ class Network():
         img_set = np.asfarray(X)
         img = img_set[n].reshape((28,28))
         plt.imshow(img, cmap="Greys")
+        plt.show()
+
+    # Training Cost over Epoch Graph
+    def costHistory(self, history):
+        ep = [i for i in range(1, len(history) + 1)]
+        plt.plot(ep, history, color="#14d0f0", label="Training Cost")
+        plt.xticks(ep)
+        plt.xlabel("Epoch")
+        plt.ylabel("Training Cost")
+        plt.title("Cost over Epoch")
         plt.show()
