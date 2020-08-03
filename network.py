@@ -8,7 +8,6 @@ TO DO LIST:
     - Add Softmax
     - Add ReLU
  - Visualization:
-    - Learning Curves (Train vs CV)
     - Predict Probability Graph
 '''
 
@@ -109,8 +108,16 @@ class Network():
         return h
 
     # Performs Stochastic Gradient Descent
-    def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, costH=False, accurH=False, both=False, history=False):
+    def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, cv=0, costH=False, accurH=False, both=False, history=False):
         if history: J_hist = []
+        if cv: 
+            size = int(y.shape[0] * (1 - cv))
+            X_cv = X[size:, :]
+            X = X[:size, :]
+            y_cv = y[size:, :]
+            y = y[:size, :]
+            cJ_hist = []
+
         for i in range(epoch):
 
             # Randome Order
@@ -130,16 +137,32 @@ class Network():
             if both:
                 costH = accurH = False
                 J, h = self.costFunction(X, y, lambda_, True)
-                if history: J_hist.append(J)
-                print("Epoch {} : Trainig Cost = {}, Training Accuracy = {}".format(i + 1, J, self.accuracy(h, y)))
-        
+                if cv: 
+                    cJ, ch = self.costFunction(X_cv, y_cv, lambda_, True)
+                if history: 
+                    J_hist.append(J)
+                    if cv: cJ_hist.append(cJ)
+                
+                print(
+                    "Epoch {} : Trainig Cost = {}, Training Accuracy = {}".format(
+                        i + 1, round(J, 8) , round(self.accuracy(h, y), 8) 
+                        )
+                    )
+                if cv: print(
+                    "        CV Cost = {}, CV Accuracy = {}".format(
+                        round(cJ, 8), round(self.accuracy(ch, y_cv), 8)
+                        )
+                    )
+
             if costH: print("Epoch {} Cost : {} ".format(i + 1, self.costFunction(X, y, lambda_)))
         
             if accurH: print("Epoch {} Training Accuracy : {} ".format(i + 1, self.accuracy(self.forwardFeed(X), y)))
         
             if not (costH or accurH or both): print("Epoch {} Completed".format(i + 1))
         
-        if history: return h, J_hist
+        if history:
+            if cv: return h, J_hist, cJ_hist 
+            return h, J_hist
         return h
 
     # Output test performance
@@ -158,12 +181,15 @@ class Network():
         plt.imshow(img, cmap="Greys")
         plt.show()
 
-    # Training Cost over Epoch Graph
-    def costHistory(self, history):
+    # Cost over Epoch Graph
+    def costHistory(self, history, cv_history=None):
         ep = [i for i in range(1, len(history) + 1)]
         plt.plot(ep, history, color="#14d0f0", label="Training Cost")
+        if cv_history:
+            plt.plot(ep, cv_history, color="#ffb3ba", label="CV Cost")
         plt.xticks(ep)
         plt.xlabel("Epoch")
         plt.ylabel("Training Cost")
         plt.title("Cost over Epoch")
+        plt.legend()
         plt.show()
