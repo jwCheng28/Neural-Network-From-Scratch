@@ -6,7 +6,6 @@ import random
 TO DO LIST:
  - Functions:
     - Add Softmax
-    - Add ReLU
  - Visualization:
     - Predict Probability Graph
 '''
@@ -94,6 +93,16 @@ class Network():
             thetaGrad[i][:, 1:] = thetaGrad[i][:, 1:] + (lambda_/m) * self.theta[i][:, 1:]
         return thetaGrad
 
+    # Data Split
+    def splitData(self, X, y, size):
+        X_split = X[size:, :]
+        X = X[:size, :]
+        
+        y_split = y[size:, :]
+        y = y[:size, :]
+
+        return X, y, X_split, y_split 
+
     # Performs Gradient Descent
     def gradientDescent(self, X, y, alpha, epoch, lambda_=0, costH=False, accurH=False):
         for i in range(epoch):
@@ -112,10 +121,7 @@ class Network():
         if history: J_hist = []
         if cv: 
             size = int(y.shape[0] * (1 - cv))
-            X_cv = X[size:, :]
-            X = X[:size, :]
-            y_cv = y[size:, :]
-            y = y[:size, :]
+            X, y, X_cv, y_cv = self.splitData(X, y, size)
             cJ_hist = []
 
         for i in range(epoch):
@@ -172,7 +178,12 @@ class Network():
         return np.mean(h==y)
 
     # Predict IMG
-    def predict(self, X, h):
+    def predict(self, X, h, prob=False):
+        '''
+        To Add Feature:
+        Add in prob argument to enable user to see 
+        the probability distribution
+        '''
         n = np.random.randint(0, len(X))
         predict = np.argmax(h, axis=1)[n]
         print("Prediction: " + str(predict))
