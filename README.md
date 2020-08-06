@@ -12,5 +12,4 @@ This program aims to implement a neural network from scratch, and use MNIST data
 ## More to Add
 - Add Softmax Function
 - Add ReLU Function
-- Add Graph Visuals (progress/learning curve)
 - Max Accuracy
