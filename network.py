@@ -178,22 +178,35 @@ class Network():
         return np.mean(h==y)
 
     # Predict IMG
-    def predict(self, X, h, prob=False):
-        '''
-        To Add Feature:
-        Add in prob argument to enable user to see 
-        the probability distribution
-        '''
+    def predict(self, X, h, prob=False, save_file=None):
+        fig, (ax1, ax2) = plt.subplots(figsize=(6.4, 4),ncols=2)
         n = np.random.randint(0, len(X))
         predict = np.argmax(h, axis=1)[n]
         print("Prediction: " + str(predict))
+
         img_set = np.asfarray(X)
         img = img_set[n].reshape((28,28))
-        plt.imshow(img, cmap="Greys")
+        ax1.imshow(img, cmap="Greys")
+        ax1.set_title("Test Image")
+        ax1.axis('off')
+
+        ax2.bar([i for i in range(len(h[n]))],list(h[n]))
+        ax2.set_xticks([i for i in range(10)])
+        ax2.set_yticks([0.2 * i for i in range(1, 6)])
+        asp = np.diff(ax2.get_xlim())[0] / np.diff(ax2.get_ylim())[0]
+        ax2.set_aspect(asp)
+
+        ax2.set_title("Model Confidence for Each Label")
+        ax2.set_ylabel("Confidence")
+        ax2.set_xlabel("Labels")
+
+        fig.tight_layout()
+        if save_file:
+            plt.savefig("pics/" + save_file + "_{}".format(n))
         plt.show()
 
     # Cost over Epoch Graph
-    def costHistory(self, history, cv_history=None):
+    def costHistory(self, history, cv_history=None, save_file=None):
         ep = [i for i in range(1, len(history) + 1)]
         plt.plot(ep, history, color="#14d0f0", label="Training Cost")
         if cv_history:
@@ -203,4 +216,6 @@ class Network():
         plt.ylabel("Training Cost")
         plt.title("Cost over Epoch")
         plt.legend()
+        if save_file:
+            plt.savefig("pics/" + save_file)
         plt.show()
