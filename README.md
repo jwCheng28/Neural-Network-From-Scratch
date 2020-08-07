@@ -1,7 +1,9 @@
 # Neural Network for Reading Handwritten Digits
 
 ## Basic Idea
-This program aims to implement a neural network from scratch, and use MNIST dataset of handwritten digit images to train the neural network to read Handwritten Digits.
+This project aims to implement a neural network class with various different functionalities from scratch.
+
+Afterwards, we'll use this created neural network class to create a neural network and use MNIST dataset of handwritten digit images to train the neural network to read/recognize Handwritten Digit Images.
 
 ## Create and Train a Neural Network
 For this example we will be creating a neural network for reading handwritten digits.
@@ -13,7 +15,7 @@ import network
 import numpy as np
 ```
 ### Getting the Data
-We can get the necessary data from the data_manager python file.
+We can get the necessary data from the data_manager (created to manage and clean mnist data files) python file.
 ```
 # Get train and test data
 train, test = dm.load_data()
