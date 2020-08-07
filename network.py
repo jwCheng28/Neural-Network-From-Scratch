@@ -180,7 +180,7 @@ class Network():
     # Predict IMG
     def predict(self, X, h, prob=False, save_file=None):
         fig, (ax1, ax2) = plt.subplots(figsize=(6.4, 4),ncols=2)
-        n = np.random.randint(0, len(X))
+        n = np.random.randint(0, len(h))
         predict = np.argmax(h, axis=1)[n]
         print("Prediction: " + str(predict))
 
