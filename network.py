@@ -202,7 +202,7 @@ class Network():
 
         fig.tight_layout()
         if save_file:
-            plt.savefig("pics/" + save_file + "_{}".format(n))
+            plt.savefig("pics/" + save_file + "_{}.png".format(n))
         plt.show()
 
     # Cost over Epoch Graph
@@ -217,5 +217,5 @@ class Network():
         plt.title("Cost over Epoch")
         plt.legend()
         if save_file:
-            plt.savefig("pics/" + save_file)
+            plt.savefig("pics/" + save_file + ".png")
         plt.show()
