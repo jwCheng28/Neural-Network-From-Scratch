@@ -63,3 +63,6 @@ ann.costHistory(history, cv_history)
 In our case, both the training and cross validation cost are relatively the same, so it doesn't seem like our trained neural network is overfitting.
 
 So now we're done; we've successfuly created and train a neural network to recognize handwritten digits.
+
+## Data Source
+The original handwritten digits and label data are from MNIST. The dataset I used for my training is from Kaggle (https://www.kaggle.com/c/digit-recognizer/data), which has been process into CSV format. The dataset in the dataset/ directory are the final version used for this project, which I've process the CSV data into numpy arrays and compressed into gzip files.
