@@ -60,13 +60,13 @@ ann.accurHistory(history)
 
 In our case, both the training and cross validation Cost & Accuracy are relatively the same, so it doesn't seem like our trained neural network is overfitting.
 
-Finally, we should test our results on the entire test data to see our performance.
+Finally, we should test our results on the entire test data to see how well our Neural Network performs on unseen data.
 ```
 X_test, y_test = dm.seperate(test)
 result = ann.forwardFeed(X_test)
 accuracy = ann.accuracy(result, y_test)
 ```
-In my case, the accuracy I achieved is 95.78% which is not too bad for a simple neural network.
+In my case, the trained Neural Network achieved 95.78% accuracy which is not too bad for a simple neural network.
 
 So now we're done; we've successfuly created and train a neural network to recognize handwritten digits.
 
