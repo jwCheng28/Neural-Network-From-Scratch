@@ -22,9 +22,6 @@ train, test = dm.load_data()
 
 # Seperate data into training set and labels
 X, y = dm.seperate(train)
-
-# One hot encode all the labels
-y = np.eye(10)[y]
 ```
 ### Create and Train our Neural Network
 To create a neural network, we could simply initialize a network from our network class, with a list the amount of neurons/nodes for each layer.
