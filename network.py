@@ -95,7 +95,8 @@ class Network():
         return thetaGrad
 
     # Data Split
-    def splitData(self, X, y, size):
+    def splitData(self, X, y, cv):
+        size = int(y.shape[0] * (1 - cv))
         X_split = X[size:, :]
         X = X[:size, :]
         
@@ -104,33 +105,35 @@ class Network():
 
         return X, y, X_split, y_split 
 
+    # Randomize Dataset
+    def randomize_data(self, X, y):
+        c = list(zip(X, y))
+        random.shuffle(c)
+        X, y = zip(*c)
+        X, y = np.asarray(X), np.asarray(y)
+        return X, y
+
     # Performs Gradient Descent
     def gradientDescent(self, X, y, alpha, epoch, lambda_=0, costH=False, accurH=False):
         for i in range(epoch):
             h = self.forwardFeed(X)
-            if costH: print("Epoch {} : {} ".format(i, self.costFunction(X, y, lambda_)))
-            if accurH: print("Epoch {} : {} ".format(i, self.accuracy(h, y)))
             thetaGrad = self.backPropagation(y, h, lambda_)
             self.theta = self.theta - alpha * thetaGrad
+            if costH: print("Epoch {} : {} ".format(i, self.costFunction(X, y, lambda_)))
+            if accurH: print("Epoch {} : {} ".format(i, self.accuracy(h, y)))
             if not (costH or accurH): print("Epoch {} Completed".format(i))
         h = self.forwardFeed(X)
         print("Results - Cost : {}, Accuracy : {}".format(self.costFunction(X, y, lambda_), self.accuracy(h, y)))        
         return h
 
     # Performs Stochastic Gradient Descent
-    def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, cv=0, costH=False, accurH=False, both=False, history=False):
-        if history: J_hist = []
-        if cv: 
-            size = int(y.shape[0] * (1 - cv))
-            X, y, X_cv, y_cv = self.splitData(X, y, size)
-            cJ_hist = []
+    def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, cv=0, both=False):
+        history = {'Cost':[], 'Accuracy':[], 'CV Cost':[], 'CV Accuracy':[]}
+        if cv: X, y, X_cv, y_cv = self.splitData(X, y, cv)
 
         for i in range(epoch):
-
-            # Randome Order
-            c = list(zip(X, y))
-            random.shuffle(c)
-            X_rand, y_rand = list(zip(*c))
+            # Randomize Dataset Order
+            X, y = self.randomize_data(X, y)
 
             # Train in batches
             for j in range(0, len(X), batch_size):
@@ -142,41 +145,28 @@ class Network():
 
             # Epoch Info Display Options    
             if both:
-                costH = accurH = False
                 J, h = self.costFunction(X, y, lambda_, True)
+                accuracy = self.accuracy(h, y)
+                history['Cost'] += [J]
+                history['Accuracy'] += [accuracy]
+                print("Epoch {} : Trainig Cost = {}, Training Accuracy = {}".format(i + 1, round(J, 8) , round(accuracy, 8)))
+
                 if cv: 
                     cJ, ch = self.costFunction(X_cv, y_cv, lambda_, True)
-                if history: 
-                    J_hist.append(J)
-                    if cv: cJ_hist.append(cJ)
-                
-                print(
-                    "Epoch {} : Trainig Cost = {}, Training Accuracy = {}".format(
-                        i + 1, round(J, 8) , round(self.accuracy(h, y), 8) 
-                        )
-                    )
-                if cv: print(
-                    "            CV Cost = {}, CV Accuracy = {}".format(
-                        round(cJ, 8), round(self.accuracy(ch, y_cv), 8)
-                        )
-                    )
-
-            if costH: print("Epoch {} Cost : {} ".format(i + 1, self.costFunction(X, y, lambda_)))
+                    cv_accuracy = self.accuracy(ch, y_cv)
+                    history['CV Cost'] += [cJ]
+                    history['CV Accuracy'] += [cv_accuracy]
+                    print(' ' * 10 + "CV Cost = {}, CV Accuracy = {}".format(round(cJ, 8), round(cv_accuracy, 8)))
         
-            if accurH: print("Epoch {} Training Accuracy : {} ".format(i + 1, self.accuracy(self.forwardFeed(X), y)))
+            else: print("Epoch {} Completed".format(i + 1))
         
-            if not (costH or accurH or both): print("Epoch {} Completed".format(i + 1))
-        
-        if history:
-            if cv: return h, J_hist, cJ_hist 
-            return h, J_hist
-        return h
+        return h, history
 
     # Output test performance
     def accuracy(self, h, y):
         h = np.argmax(h, axis=1)
-        y = np.where(y==1)[1]
-        return np.mean(h==y)
+        y = np.where(y == 1)[1]
+        return np.mean(h == y)
 
     # Predict IMG
     def predict(self, X, h, prob=False, save_file=None):
@@ -207,17 +197,40 @@ class Network():
         plt.show()
 
     # Cost over Epoch Graph
-    def costHistory(self, history, cv_history=None, save_file=None):
-        ep = [i for i in range(1, len(history) + 1)]
+    def costHistory(self, history, save_file=None):
         ax = plt.figure().gca()
-        plt.plot(ep, history, color="#14d0f0", label="Training Cost")
-        if cv_history:
-            plt.plot(ep, cv_history, color="#ffb3ba", label="CV Cost")
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        cost = history.get('Cost')
+        cv_cost = history.get('CV Cost')
 
+        ep = [i for i in range(1, len(history['Cost']) + 1)]
+
+        plt.plot(ep, cost, color="#14d0f0", label="Training Cost")
+        if cv_cost: plt.plot(ep, cv_cost, color="#ffb3ba", label="CV Cost")
+
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         plt.xlabel("Epoch")
-        plt.ylabel("Training Cost")
+        plt.ylabel("Cost")
         plt.title("Cost over Epoch")
+        plt.legend()
+        if save_file:
+            plt.savefig("pics/" + save_file + ".png")
+        plt.show()
+
+    # Accuracy Ove Epoch Graph
+    def accurHistory(self, history, save_file=None):
+        ax = plt.figure().gca()
+        accuracy = history.get('Accuracy')
+        cv_accuracy = history.get('CV Accuracy')
+
+        ep = [i for i in range(1, len(history['Cost']) + 1)]
+
+        plt.plot(ep, accuracy, color="#14d0f0", label="Training Accuracy")
+        if cv_accuracy: plt.plot(ep, cv_accuracy, color="#ffb3ba", label="CV Accuracy")
+
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        plt.xlabel("Epoch")
+        plt.ylabel("Accuracy")
+        plt.title("Accuracy over Epoch")
         plt.legend()
         if save_file:
             plt.savefig("pics/" + save_file + ".png")
