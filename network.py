@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+from matplotlib.ticker import MaxNLocator
 
 '''
 TO DO LIST:
@@ -155,7 +156,7 @@ class Network():
                         )
                     )
                 if cv: print(
-                    "        CV Cost = {}, CV Accuracy = {}".format(
+                    "            CV Cost = {}, CV Accuracy = {}".format(
                         round(cJ, 8), round(self.accuracy(ch, y_cv), 8)
                         )
                     )
@@ -208,10 +209,12 @@ class Network():
     # Cost over Epoch Graph
     def costHistory(self, history, cv_history=None, save_file=None):
         ep = [i for i in range(1, len(history) + 1)]
+        ax = plt.figure().gca()
         plt.plot(ep, history, color="#14d0f0", label="Training Cost")
         if cv_history:
             plt.plot(ep, cv_history, color="#ffb3ba", label="CV Cost")
-        plt.xticks(ep)
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
         plt.xlabel("Epoch")
         plt.ylabel("Training Cost")
         plt.title("Cost over Epoch")
