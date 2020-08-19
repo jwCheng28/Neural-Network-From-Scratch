@@ -34,19 +34,19 @@ ann = network.Network([784, 100, 10])
 ```
 This class contain 2 options to train the neural network, Gradient Descent and Stochastic Gradient Descent. In our case, with a large dataset we'll use Stochastic Gradient Descent.
 ```
-h, history, cv_history = ann.stochasticGD(X, y, 0.3, 16, 32, 0, cv=0.1, both=True, history=True) 
+h, history, cv_history = ann.stochasticGD(X, y, 0.2, 24, 64, 0, cv=0.1, both=True, history=True) 
 ```
 For this training we used:
 ```
-learning rate = 0.3, epochs = 16, batch size = 32
+learning rate = 0.2, epochs = 24, batch size = 64
 regularization lambda = 0, cross validation size = 0.1
 both=True for display all train info, history=True to save history cost
 ```
 ### Training Results
 With the training parameters as stated above the following results are what I achieved in my testing.
 ```
-Epoch 16 : Trainig Cost = 0.29416113, Training Accuracy = 0.9602037
-           Cross Validation Cost = 0.35999273, Cross Validation Accuracy = 0.95133333
+Epoch 24 : Trainig Cost = 0.3613624, Training Accuracy = 0.94927778
+           CV Cost = 0.37288464, CV Accuracy = 0.9475
 ```
 We could test the performance of our trained neural network by using the predict function in the neural network class to see how well the neural network recognize pictures of handwritten digit.
 ```
@@ -58,9 +58,17 @@ We could also plot the Training and Cross Validation Cost history to ensure we a
 ```
 ann.costHistory(history, cv_history)
 ```
-![alt text](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/history.png) 
+![alt text](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/history_.png) 
 
 In our case, both the training and cross validation cost are relatively the same, so it doesn't seem like our trained neural network is overfitting.
+
+Finally, we should test our results on the entire test data to see our performance.
+```
+X_test, y_test = dm.seperate(test)
+result = ann.forwardFeed(X_test)
+accuracy = ann.accuracy(result, y_test)
+```
+In my case, the accuracy I achieved is 93.72% which is not too bad for a simple neural network.
 
 So now we're done; we've successfuly created and train a neural network to recognize handwritten digits.
 
