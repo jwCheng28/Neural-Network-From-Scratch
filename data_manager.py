@@ -41,5 +41,5 @@ def display(n, train_data, test_data=None):
 # Seperate data into X, y
 def seperate(data):
     X = data[:, 1:]
-    y = data[:, 0]
+    y = np.eye(10)[data[:, 0]]
     return X, y
