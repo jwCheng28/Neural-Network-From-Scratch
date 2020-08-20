@@ -1,12 +1,12 @@
-# Neural Network for Reading Handwritten Digits
+# Neural Network from Scratch
 
 ## Basic Idea
-This project aims to implement a neural network class with various different functionalities from scratch.
+This project aims to implement a neural network class with various different functionalities from scratch, where the user can create their own artificial neural network of any size.
 
 Afterwards, we'll use this created neural network class to create a neural network and use MNIST dataset of handwritten digit images to train the neural network to read/recognize Handwritten Digit Images.
 
-## Create and Train a Neural Network
-For this example we will be creating a neural network for reading handwritten digits.
+## Create and Train a Neural Network using this Module
+For this example we will be creating a neural network with the created module for reading handwritten digits.
 ### Get Started
 To get start first we import the necesarry library and the created neural network & data managing classes.
 ```
