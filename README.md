@@ -5,10 +5,13 @@ This project aims to implement a neural network class with various different fun
 
 Afterwards, we'll use this created neural network class to create a neural network and use MNIST dataset of handwritten digit images to train the neural network to read/recognize Handwritten Digit Images.
 
-## Create and Train a Neural Network using this Module
-For this example we will be creating a neural network with the created module for reading handwritten digits.
+## Implementation
+If you're curious how the Neural Network is created, all the code for it could be found in the ```network.py``` file; or if you want to create a neural network you can read the example below or look at the testing file in ```testing.ipynb```.
+
+## Create and Train a Neural Network using this Class
+For this example we will be creating a neural network for reading handwritten digits.
 ### Get Started
-To get start first we import the necesarry library and the created neural network & data managing classes.
+To get start first we import the necesarry library and the created data managing & neural network classes.
 ```
 import data_manager as dm
 import network
