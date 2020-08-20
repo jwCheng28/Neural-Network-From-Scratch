@@ -26,24 +26,24 @@ X, y = dm.seperate(train)
 ### Create and Train our Neural Network
 To create a neural network, we could simply initialize a network from our network class, with a list the amount of neurons/nodes for each layer.
 ```
-# 784 input nodes, 100 nodes in hidden layer, 10 output nodes
-ann = network.Network([784, 100, 10])
+# 784 input nodes, 128 nodes in hidden layer, 10 output nodes
+ann = network.Network([784, 128, 10])
 ```
 This class contain 2 options to train the neural network, Gradient Descent and Stochastic Gradient Descent. In our case, with a large dataset we'll use Stochastic Gradient Descent.
 ```
-h, history, cv_history = ann.stochasticGD(X, y, 0.2, 24, 64, 0, cv=0.1, both=True, history=True) 
+h, history = ann.stochasticGD(X, y, 0.33, 16, 64, lambda_=0.05, cv=0.1, both=True) 
 ```
 For this training we used:
 ```
-learning rate = 0.2, epochs = 24, batch size = 64
-regularization lambda = 0, cross validation size = 0.1
-both=True for display all train info, history=True to save history cost
+learning rate = 0.33, epochs = 16, batch size = 64
+regularization lambda = 0.05, cross validation size = 0.1
+both = True to display all training info
 ```
 ### Training Results
 With the training parameters as stated above the following results are what I achieved in my testing.
 ```
-Epoch 24 : Trainig Cost = 0.3613624, Training Accuracy = 0.94927778
-           CV Cost = 0.37288464, CV Accuracy = 0.9475
+Epoch 16 : Trainig Cost = 0.32767973, Training Accuracy = 0.95894444
+           CV Cost = 0.29854898, CV Accuracy = 0.96516667
 ```
 We could test the performance of our trained neural network by using the predict function in the neural network class to see how well the neural network recognize pictures of handwritten digit.
 ```
@@ -51,21 +51,22 @@ ann.predict(X, h)
 ```
 ![alt text 1](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/img_confidence_407.png) ![alt text 2](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/img_confidence_52081.png)
 
-We could also plot the Training and Cross Validation Cost history to ensure we are not overfitting.
+We could also plot the Training and Cross Validation Cost & Accuracy history to ensure we are not overfitting.
 ```
-ann.costHistory(history, cv_history)
+ann.costHistory(history)
+ann.accurHistory(history)
 ```
-![alt text](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/history_.png) 
+![alt text 1](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/history_new.png) ![alt text 2](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/accur_hist.png)
 
-In our case, both the training and cross validation cost are relatively the same, so it doesn't seem like our trained neural network is overfitting.
+In our case, both the training and cross validation Cost & Accuracy are relatively the same, so it doesn't seem like our trained neural network is overfitting.
 
-Finally, we should test our results on the entire test data to see our performance.
+Finally, we should test our results on the entire test data to see how well our Neural Network performs on unseen data.
 ```
 X_test, y_test = dm.seperate(test)
 result = ann.forwardFeed(X_test)
 accuracy = ann.accuracy(result, y_test)
 ```
-In my case, the accuracy I achieved is 93.72% which is not too bad for a simple neural network.
+In my case, the trained Neural Network achieved 95.78% accuracy which is not too bad for a simple neural network.
 
 So now we're done; we've successfuly created and train a neural network to recognize handwritten digits.
 
