@@ -2,14 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 from matplotlib.ticker import MaxNLocator
-
-'''
-TO DO LIST:
- - Functions:
-    - Add Softmax
- - Visualization:
-    - Predict Probability Graph
-'''
+import pickle
 
 class Network():
     def __init__(self, structure):
@@ -26,6 +19,13 @@ class Network():
             ]
         self.a = []
         self.delta = []
+
+    def save_weights(folder="saved/", save_file="weights"):
+        pickle.dump(self.theta, open(folder + save_file + '.pyb', "wb"))
+
+    def load_weights(path="saved/weights.pyb"):
+        weights = pickle.load(open(path, "rb"))
+        self.theta = weights
 
     # Sigmoid Function
     def sigmoid(self, z):
