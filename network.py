@@ -5,6 +5,15 @@ from matplotlib.ticker import MaxNLocator
 import pickle
 
 class Network():
+    '''
+    Description:
+     - This class provides the user to easily construct a simple neural network
+    Example:
+     - neural_network = Network([10, 20, 20, 1]) -> corresponding nodes number for each layer
+     - Prepare your data with X, y
+     - Train: h, hist = neural_network.gradientDescent(X, y, alpha, epoch, lambda_, both=True)
+    '''
+
     def __init__(self, structure):
         '''
         structure is an array that indicates number of neurons in each layer
@@ -175,32 +184,33 @@ class Network():
         return np.mean(h == y)
 
     # Predict IMG
-    def predict(self, X, h, prob=False, save_file=None):
-        fig, (ax1, ax2) = plt.subplots(figsize=(6.4, 4),ncols=2)
+    def predict(self, X, h, display=True, save_file=None):
         n = np.random.randint(0, len(h))
         predict = np.argmax(h, axis=1)[n]
         print("Prediction: " + str(predict))
 
-        img_set = np.asfarray(X)
-        img = img_set[n].reshape((28,28))
-        ax1.imshow(img, cmap="Greys")
-        ax1.set_title("Test Image")
-        ax1.axis('off')
+        if display:
+            fig, (ax1, ax2) = plt.subplots(figsize=(6.4, 4),ncols=2)
+            img_set = np.asfarray(X)
+            img = img_set[n].reshape((28,28))
+            ax1.imshow(img, cmap="Greys")
+            ax1.set_title("Test Image")
+            ax1.axis('off')
 
-        ax2.bar([i for i in range(len(h[n]))],list(h[n]))
-        ax2.set_xticks([i for i in range(10)])
-        ax2.set_yticks([0.2 * i for i in range(1, 6)])
-        asp = np.diff(ax2.get_xlim())[0] / np.diff(ax2.get_ylim())[0]
-        ax2.set_aspect(asp)
+            ax2.bar([i for i in range(len(h[n]))],list(h[n]))
+            ax2.set_xticks([i for i in range(10)])
+            ax2.set_yticks([0.2 * i for i in range(1, 6)])
+            asp = np.diff(ax2.get_xlim())[0] / np.diff(ax2.get_ylim())[0]
+            ax2.set_aspect(asp)
 
-        ax2.set_title("Model Confidence for Each Label")
-        ax2.set_ylabel("Confidence")
-        ax2.set_xlabel("Labels")
+            ax2.set_title("Model Confidence for Each Label")
+            ax2.set_ylabel("Confidence")
+            ax2.set_xlabel("Labels")
 
-        fig.tight_layout()
-        if save_file:
-            plt.savefig("pics/" + save_file + "_{}.png".format(n))
-        plt.show()
+            fig.tight_layout()
+            if save_file:
+                plt.savefig("pics/" + save_file + "_{}.png".format(n))
+            plt.show()
 
     # Cost over Epoch Graph
     def costHistory(self, history, save_file=None):
