@@ -17,12 +17,15 @@ class Network():
             np.random.randn(r, c + 1) 
             for r, c in zip(structure[1:], structure[:-1])
             ]
+        # Array of Node Values of each layer
         self.a = []
         self.delta = []
 
+    # Save Trained Weight
     def save_weights(folder="saved/", save_file="weights"):
         pickle.dump(self.theta, open(folder + save_file + '.pyb', "wb"))
 
+    # Load Traind Weight
     def load_weights(path="saved/weights.pyb"):
         weights = pickle.load(open(path, "rb"))
         self.theta = weights
@@ -114,17 +117,20 @@ class Network():
         return X, y
 
     # Performs Gradient Descent
-    def gradientDescent(self, X, y, alpha, epoch, lambda_=0, costH=False, accurH=False):
+    def gradientDescent(self, X, y, alpha, epoch, lambda_=0, both=False):
+        history = {'Cost':[], 'Accuracy':[], 'CV Cost':[], 'CV Accuracy':[]}
         for i in range(epoch):
             h = self.forwardFeed(X)
             thetaGrad = self.backPropagation(y, h, lambda_)
             self.theta = self.theta - alpha * thetaGrad
-            if costH: print("Epoch {} : {} ".format(i, self.costFunction(X, y, lambda_)))
-            if accurH: print("Epoch {} : {} ".format(i, self.accuracy(h, y)))
-            if not (costH or accurH): print("Epoch {} Completed".format(i))
-        h = self.forwardFeed(X)
-        print("Results - Cost : {}, Accuracy : {}".format(self.costFunction(X, y, lambda_), self.accuracy(h, y)))        
-        return h
+            if both:
+                J, h = self.costFunction(X, y, lambda_, True)
+                accuracy = self.accuracy(h, y)
+                history['Cost'] += [J]
+                history['Accuracy'] += [accuracy]
+                print("Epoch {} : Trainig Cost = {}, Training Accuracy = {}".format(i + 1, round(J, 8) , round(accuracy, 8)))
+            else: print("Epoch {} Completed".format(i))
+        return h, history
 
     # Performs Stochastic Gradient Descent
     def stochasticGD(self, X, y, alpha, epoch, batch_size, lambda_=0, cv=0, both=False):
