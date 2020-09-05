@@ -1,8 +1,8 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import random
 from matplotlib.ticker import MaxNLocator
+import matplotlib.pyplot as plt
+import numpy as np
 import pickle
+import random
 
 class Network():
     '''
@@ -28,6 +28,7 @@ class Network():
             ]
         # Array of Node Values of each layer
         self.a = []
+        # Array of Deltas of each layer
         self.delta = []
 
     # Save Trained Weight
@@ -109,12 +110,8 @@ class Network():
     # Data Split
     def splitData(self, X, y, cv):
         size = int(y.shape[0] * (1 - cv))
-        X_split = X[size:, :]
-        X = X[:size, :]
-        
-        y_split = y[size:, :]
-        y = y[:size, :]
-
+        X, X_split = X[:size, :], X[size:, :]
+        y, y_split = y[:size, :], y[size:, :]
         return X, y, X_split, y_split 
 
     # Randomize Dataset
@@ -208,46 +205,31 @@ class Network():
             ax2.set_xlabel("Labels")
 
             fig.tight_layout()
-            if save_file:
-                plt.savefig("pics/" + save_file + "_{}.png".format(n))
+            if save_file: plt.savefig("pics/" + save_file + "_{}.png".format(n))
             plt.show()
+
+    # Format for plotting Attribute over Epoch Graphs
+    def plotFormat(self, history, type_, save_file=None):
+        ax = plt.figure().gca()
+        cost = history.get(type_)
+        cv_cost = history.get('CV ' + type_)
+        ep = [i for i in range(1, len(history[type_]) + 1)]
+
+        plt.plot(ep, cost, color="#14d0f0", label="Training " + type_)
+        if cv_cost: plt.plot(ep, cv_cost, color="#ffb3ba", label="CV " + type_)
+
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        plt.xlabel("Epoch")
+        plt.ylabel(type_)
+        plt.title(type_ + " over Epoch")
+        plt.legend()
+        if save_file: plt.savefig("pics/" + save_file + ".png")
+        plt.show()
 
     # Cost over Epoch Graph
     def costHistory(self, history, save_file=None):
-        ax = plt.figure().gca()
-        cost = history.get('Cost')
-        cv_cost = history.get('CV Cost')
-
-        ep = [i for i in range(1, len(history['Cost']) + 1)]
-
-        plt.plot(ep, cost, color="#14d0f0", label="Training Cost")
-        if cv_cost: plt.plot(ep, cv_cost, color="#ffb3ba", label="CV Cost")
-
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        plt.xlabel("Epoch")
-        plt.ylabel("Cost")
-        plt.title("Cost over Epoch")
-        plt.legend()
-        if save_file:
-            plt.savefig("pics/" + save_file + ".png")
-        plt.show()
+        self.plotFormat(history, 'Cost', save_file=save_file)
 
     # Accuracy Ove Epoch Graph
     def accurHistory(self, history, save_file=None):
-        ax = plt.figure().gca()
-        accuracy = history.get('Accuracy')
-        cv_accuracy = history.get('CV Accuracy')
-
-        ep = [i for i in range(1, len(history['Cost']) + 1)]
-
-        plt.plot(ep, accuracy, color="#14d0f0", label="Training Accuracy")
-        if cv_accuracy: plt.plot(ep, cv_accuracy, color="#ffb3ba", label="CV Accuracy")
-
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        plt.xlabel("Epoch")
-        plt.ylabel("Accuracy")
-        plt.title("Accuracy over Epoch")
-        plt.legend()
-        if save_file:
-            plt.savefig("pics/" + save_file + ".png")
-        plt.show()
+        self.plotFormat(history, 'Accuracy', save_file=save_file)
