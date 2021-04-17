@@ -3,25 +3,28 @@
 ## Basic Idea
 This project aims to implement a neural network class with various different functionalities from scratch, where the user can create their own artificial neural network of any size.
 
-Afterwards, we'll use this created neural network class to create a neural network and use MNIST dataset of handwritten digit images to train the neural network to read/recognize Handwritten Digit Images.
+To test out the neural network class, I've created a demo notebook where we used MNIST dataset of handwritten digit images to train the neural network to read/recognize Handwritten Digit Images.
 
 ## Implementation
-If you're curious how the Neural Network is created, all the code for it could be found in the ```network.py``` file; or if you want to create a neural network you can read the example below or look at the testing file in ```testing.ipynb```.
+If you're curious how the Neural Network is created, all the code for it could be found in the ```network.py``` file; or if you want to create a neural network you can read the example below or look at the testing file in ```demo/mnist_digt_recognition_demo.ipynb```.
+
+## Get Started
+This project is written in Python 3, so be sure to have python installed first. Then simply run `pip install -r requirements.txt` on the command line to install all the necessary libraries.
 
 ## Create and Train a Neural Network using this Class
 For this example we will be creating a neural network for reading handwritten digits.
-### Get Started
-To get start first we import the necesarry library and the created data managing & neural network classes.
+### Importing Libraries
+To get start first we import the necesarry library and neural network classes.
 ```
-import data_manager as dm
-import network
+import neural_net as nn
 import numpy as np
 ```
 ### Getting the Data
-We can get the necessary data from the data_manager (created to manage and clean mnist data files) python file.
+You can try it out with your own data, or if you want to follow along you can use the python script and dataset in the demo folder.
 ```
+import load_mnist
 # Get train and test data
-train, test = dm.load_data()
+train, test = load_mnist.load_data()
 
 # Seperate data into training set and labels
 X, y = dm.seperate(train)
@@ -30,11 +33,11 @@ X, y = dm.seperate(train)
 To create a neural network, we could simply initialize a network from our network class, with a list the amount of neurons/nodes for each layer.
 ```
 # 784 input nodes, 128 nodes in hidden layer, 10 output nodes
-ann = network.Network([784, 128, 10])
+neuralNet = nn.Network([784, 128, 10])
 ```
 This class contain 2 options to train the neural network, Gradient Descent and Stochastic Gradient Descent. In our case, with a large dataset we'll use Stochastic Gradient Descent.
 ```
-h, history = ann.stochasticGD(X, y, 0.33, 16, 64, lambda_=0.05, cv=0.1, both=True) 
+history = ann.stochasticGD(X, y, 0.33, 12, 64, lambda_=0.05, cv=0.1, both=True) 
 ```
 For this training we used:
 ```
@@ -42,22 +45,22 @@ learning rate = 0.33, epochs = 16, batch size = 64
 regularization lambda = 0.05, cross validation size = 0.1
 both = True to display all training info
 ```
-### Training Results
-With the training parameters as stated above the following results are what I achieved in my testing.
+### See Test Results
+We could test the performance of our trained neural network by looking at the accuracy of the neural net.
 ```
-Epoch 16 : Trainig Cost = 0.32767973, Training Accuracy = 0.95894444
-           CV Cost = 0.29854898, CV Accuracy = 0.96516667
+# Get Predictions
+predictions = neuralNet.forwardFeed(X)
+accuracy = neuralNet.accuracy(predictions, y)
+print("Test Accuracy:", accuracy)
 ```
-We could test the performance of our trained neural network by using the predict function in the neural network class to see how well the neural network recognize pictures of handwritten digit.
-```
-ann.predict(X, h)
-```
+
+If you follow along the demo, I've created functions in the notebook for visualizing the mnist result as shown below.
 ![alt text 1](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/img_confidence_407.png) ![alt text 2](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/img_confidence_52081.png)
 
 We could also plot the Training and Cross Validation Cost & Accuracy history to ensure we are not overfitting.
 ```
-ann.costHistory(history)
-ann.accurHistory(history)
+neuralNet.costHistory(history)
+neuralNet.accurHistory(history)
 ```
 ![alt text 1](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/history_new.png) ![alt text 2](https://github.com/jwCheng28/Neural-Network-From-Scratch/blob/master/pics/accur_hist.png)
 
@@ -65,11 +68,11 @@ In our case, both the training and cross validation Cost & Accuracy are relative
 
 Finally, we should test our results on the entire test data to see how well our Neural Network performs on unseen data.
 ```
-X_test, y_test = dm.seperate(test)
-result = ann.forwardFeed(X_test)
-accuracy = ann.accuracy(result, y_test)
+X_test, y_test = load_mnist.seperate(test)
+result = neuralNet.forwardFeed(X_test)
+accuracy = neuralNet.accuracy(result, y_test)
 ```
-In my case, the trained Neural Network achieved 95.78% accuracy which is not too bad for a simple neural network.
+In my case, the trained Neural Network achieved 95% accuracy which is not too bad for a simple neural network.
 
 So now we're done; we've successfuly created and train a neural network to recognize handwritten digits.
 
