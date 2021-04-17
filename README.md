@@ -27,7 +27,7 @@ import load_mnist
 train, test = load_mnist.load_data()
 
 # Seperate data into training set and labels
-X, y = dm.seperate(train)
+X, y = load_mnist.seperate(train)
 ```
 ### Create and Train our Neural Network
 To create a neural network, we could simply initialize a network from our network class, with a list the amount of neurons/nodes for each layer.
@@ -37,7 +37,7 @@ neuralNet = nn.Network([784, 128, 10])
 ```
 This class contain 2 options to train the neural network, Gradient Descent and Stochastic Gradient Descent. In our case, with a large dataset we'll use Stochastic Gradient Descent.
 ```
-history = ann.stochasticGD(X, y, 0.33, 12, 64, lambda_=0.05, cv=0.1, both=True) 
+history = neuralNet.stochasticGD(X, y, 0.33, 12, 64, lambda_=0.05, cv=0.1, both=True) 
 ```
 For this training we used:
 ```
